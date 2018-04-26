@@ -1,0 +1,9 @@
+{
+  "numAnts": 10,
+  "iteration": 1000,
+  "pheromoneRate": 1,
+  "distanceRate": 1,
+  "biasedRate": 0,
+  "Q": 2500,
+  "evaporationRate": 0.5
+}
