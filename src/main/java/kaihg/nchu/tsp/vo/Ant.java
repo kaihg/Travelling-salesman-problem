@@ -66,21 +66,26 @@ public class Ant {
         return this.tour;
     }
 
+    private int getLocalMaxPhero(double[][] pheroTable,int currentIndex){
+        int cities = pheroTable.length;
+        int maxIndex = 0;
+        double maxPhero = pheroTable[currentIndex][0];
+        for (int i = 1; i < cities; i++) {
+            if (pheroTable[currentIndex][i] > maxPhero && !this.tour.contains(i)) {
+                maxPhero = pheroTable[currentIndex][i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
     int findNextCity(double[][] pheroTable, double[][] distTable, double[] probAry) {
         int cities = distTable.length;
         int currentIndex = this.tour.get(tour.size() - 1);
 
         // 某機率下會直接使用最大值，減少計算量
         if (random.nextDouble() < biasedRate) {
-            int maxIndex = 0;
-            double maxPhero = pheroTable[currentIndex][0];
-            for (int i = 1; i < cities; i++) {
-                if (pheroTable[currentIndex][i] > maxPhero) {
-                    maxPhero = pheroTable[currentIndex][i];
-                    maxIndex = i;
-                }
-            }
-            return maxIndex;
+            return getLocalMaxPhero(pheroTable,currentIndex);
         }
 
 

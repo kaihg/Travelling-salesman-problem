@@ -96,6 +96,7 @@ public class AntModel implements AlgorithmModel {
         }
     }
 
+
     private double sumAllDistance() {
         double sum = 0;
         int size = cities.length;
@@ -143,8 +144,12 @@ public class AntModel implements AlgorithmModel {
         }
     }
 
-    public double getShortestTour() {
+    public double getShortestTourDistance() {
         return this.shortestTour;
+    }
+
+    public Integer[] getShortestTour(){
+        return bestTour;
     }
 
     private void pheromoneUpdate(List<Ant> ants) {
