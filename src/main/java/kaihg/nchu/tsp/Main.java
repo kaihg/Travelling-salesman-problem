@@ -40,7 +40,7 @@ public class Main {
         }
 
         // print tour
-        Integer[] tour = model.getShortestTour();
+        int[] tour = model.getShortestTour();
         for (Integer city : tour) {
             logger.append(city + 1).append(",");
         }
@@ -53,7 +53,7 @@ public class Main {
     }
 
 
-    private static void saveToFile(int seed, double shortestTourDistance, Integer[] shortestTour) throws IOException {
+    private static void saveToFile(int seed, double shortestTourDistance, int[] shortestTour) throws IOException {
         FileWriter writer = new FileWriter("C:\\Users\\kaihg\\Documents\\NCHU_AI\\tour.txt");
         writer.write("seed : " + seed + "\n");
         writer.write("total distance : " + shortestTourDistance + "\n");

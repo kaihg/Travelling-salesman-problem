@@ -2,12 +2,9 @@ package kaihg.nchu.tsp.transition;
 
 import kaihg.nchu.tsp.vo.Ant;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-public class PMCrossover implements ITransition<Ant[]> {
+public class PMCrossover implements ITransition<int[][]> {
 
     private double rate;
     private Random random;
@@ -21,54 +18,57 @@ public class PMCrossover implements ITransition<Ant[]> {
     }
 
     @Override
-    public void update(Ant[] solution) {
+    public void update(int[][] solution) {
 
         for (int i = 0, size = solution.length / 2; i < size; i++) {
             if (random.nextDouble() > rate) {
                 continue;
             }
 
-            Ant ant1 = solution[i];
-            Ant ant2 = solution[i + size];
+            int[] ant1 = solution[i];
+            int[] ant2 = solution[i + size];
 
-            int citySize = ant1.getTour().size();
+            int citySize = ant1.length;
             int startIndex = random.nextInt(citySize);
             int endIndex = random.nextInt(citySize - startIndex) + startIndex;
 
-            cross(ant1.getTour(), ant2.getTour(), startIndex, endIndex);
+            cross(ant1, ant2, startIndex, endIndex);
         }
     }
 
-    private void createMap(List<Integer> tour1, List<Integer> tour2) {
+    private void createMap(int[] tour1, int[] tour2) {
         crossMap.clear();
-        for (int i = 0; i < tour1.size(); i++) {
-            crossMap.put(tour2.get(i), tour1.get(i));
+        for (int i = 0; i < tour1.length; i++) {
+            crossMap.put(tour2[i], tour1[i]);
         }
     }
 
-    private void changeElement(List<Integer> tour1, int startIndex, int endIndex, List<Integer> sub2, Map<Integer, Integer> crossMap) {
-        for (int i = 0, size = tour1.size(); i < size; i++) {
+    private void changeElement(int[] tour1, int startIndex, int endIndex,int[] sub2, Map<Integer, Integer> crossMap) {
+        for (int i = 0, size = tour1.length; i < size; i++) {
 
             if (i >= startIndex && i <= endIndex) {
 //                tour1.set(i, sub2.get(i - startIndex));
             } else {
-                Integer city = tour1.get(i);
+                int city = tour1[i];
                 if (crossMap.containsKey(city)) {
                     Integer toBeReplace = crossMap.get(city);
                     while (crossMap.containsKey(toBeReplace)) {
                         toBeReplace = crossMap.get(toBeReplace);
                     }
 
-                    tour1.set(i, toBeReplace);
+                    tour1[i] = toBeReplace;
                 }
             }
         }
     }
 
-    void cross(List<Integer> tour1, List<Integer> tour2, int startIndex, int endIndex) {
+    void cross(int[] tour1,int[] tour2, int startIndex, int endIndex) {
 
-        List<Integer> sub1 = tour1.subList(startIndex, endIndex + 1);
-        List<Integer> sub2 = tour2.subList(startIndex, endIndex + 1);
+
+//        List<Integer> sub1 = tour1.subList(startIndex, endIndex + 1);
+//        List<Integer> sub2 = tour2.subList(startIndex, endIndex + 1);
+        int[] sub1 = Arrays.copyOfRange(tour1,startIndex,endIndex+1);
+        int[] sub2 = Arrays.copyOfRange(tour2,startIndex,endIndex+1);
 
         // save to map
         createMap(sub1, sub2);
@@ -78,15 +78,15 @@ public class PMCrossover implements ITransition<Ant[]> {
         changeElement(tour2, startIndex, endIndex, sub1, crossMap);
 
         for (int i = startIndex; i <= endIndex; i++) {
-            Integer temp = tour1.get(i);
-            tour1.set(i,tour2.get(i));
-            tour2.set(i,temp);
+            int temp = tour1[i];
+            tour1[i] = tour2[i];
+            tour2[i] = temp;
         }
     }
 
 
     @Override
-    public void update(Ant[] source, Ant[] target) {
+    public void update(int[][] source, int[][] target) {
         this.update(source);
     }
 }

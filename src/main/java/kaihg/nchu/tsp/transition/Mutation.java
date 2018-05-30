@@ -4,7 +4,7 @@ import kaihg.nchu.tsp.vo.Ant;
 
 import java.util.Random;
 
-public class Mutation implements ITransition<Ant[]> {
+public class Mutation implements ITransition<int[][]> {
 
     private double rate;
     private Random random;
@@ -15,21 +15,21 @@ public class Mutation implements ITransition<Ant[]> {
     }
 
     @Override
-    public void update(Ant[] solution) {
-        for (Ant ant : solution) {
+    public void update(int[][] solution) {
+        for (int[] tour : solution) {
             if (random.nextDouble() < rate) {
-                int index1 = random.nextInt(ant.getTour().size());
-                int index2 = random.nextInt(ant.getTour().size());
+                int index1 = random.nextInt(tour.length);
+                int index2 = random.nextInt(tour.length);
 
-                Integer temp = ant.getTour().get(index2);
-                ant.getTour().set(index2, ant.getTour().get(index1));
-                ant.getTour().set(index1, temp);
+                int temp = tour[index2];
+                tour[index2] = tour[index1];
+                tour[index1] = tour[temp];
             }
         }
     }
 
     @Override
-    public void update(Ant[] source, Ant[] target) {
+    public void update(int[][] source, int[][] target) {
 
     }
 }

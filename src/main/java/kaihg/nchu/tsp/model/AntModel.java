@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 public class AntModel implements AlgorithmModel {
 
-    private int iteration;
     private double evaporationRate;
     private double constantQ;
     private double[][] pheromoneTable;
@@ -26,39 +25,28 @@ public class AntModel implements AlgorithmModel {
     private double[] tempAry;
 
     private double shortestTour = Double.MAX_VALUE;
-    private Integer[] bestTour;
+    private int[] bestTour;
 
     public AntModel(int numAnt, int iteration, City[] cities, Config config) {
-        this.iteration = iteration;
         this.cities = cities;
 
         this.pheromoneTable = new double[cities.length][cities.length];
         this.distanceTable = new double[cities.length][cities.length];
 
         this.tempAry = new double[cities.length];
-        this.bestTour = new Integer[cities.length];
+        this.bestTour = new int[cities.length];
 
         this.constantQ = config.Q;
         this.evaporationRate = config.evaporationRate;
 
 
-//        Stream<Ant> stream = Stream.generate(Ant::new).limit(numAnt);
-        Stream<Ant> stream= Stream.generate(new Supplier<Ant>() {
-            @Override
-            public Ant get() {
-                Ant ant = new Ant();
-                ant.setPheroRate(config.pheromoneRate);
-                ant.setDistRate(config.distanceRate);
-                ant.setBiasdRate(config.biasedRate);
-                return ant;
-            }
+        Stream<Ant> stream= Stream.generate(() -> {
+            Ant ant = new Ant(cities.length);
+            ant.setPheroRate(config.pheromoneRate);
+            ant.setDistRate(config.distanceRate);
+            ant.setBiasdRate(config.biasedRate);
+            return ant;
         }).limit(numAnt);
-//        // 先設定成共用同樣設定
-//        stream.forEach((ant) -> {
-//            ant.setPheroRate(config.pheromoneRate);
-//            ant.setDistRate(config.distanceRate);
-//            ant.setBiasdRate(config.biasedRate);
-//        });
 
         this.ants = stream.collect(Collectors.toList());
     }
@@ -66,6 +54,8 @@ public class AntModel implements AlgorithmModel {
     @Override
     public void init(int seed) {
         this.random = new Random(seed);
+
+        this.ants.forEach(ant -> ant.setRandom(random));
         calDistance();
         initPheromone();
 
@@ -140,7 +130,8 @@ public class AntModel implements AlgorithmModel {
         Ant ant = ants.stream().min(Comparator.comparingDouble(Ant::getTourDistance)).get();
         if (ant.getTourDistance() < shortestTour) {
             shortestTour = ant.getTourDistance();
-            ant.getTour().toArray(bestTour);
+//            ant.getTour().toArray(bestTour);
+            System.arraycopy(ant.getTour(),0,bestTour,0,cities.length);
         }
     }
 
@@ -155,7 +146,7 @@ public class AntModel implements AlgorithmModel {
         return new Integer[0][];
     }
 
-    public Integer[] getShortestTour(){
+    public int[] getShortestTour(){
         return bestTour;
     }
 
@@ -171,8 +162,8 @@ public class AntModel implements AlgorithmModel {
         ants.forEach((ant) -> {
             double localPheromone = constantQ / ant.getTourDistance();
             for (int city = 1; city < cities.length; city++) {
-                int i = ant.getTour().get(city);
-                int j = ant.getTour().get(city - 1);
+                int i = ant.getTour()[city];
+                int j = ant.getTour()[city - 1];
                 pheromoneTable[i][j] += localPheromone;
                 pheromoneTable[j][i] += localPheromone;
             }
