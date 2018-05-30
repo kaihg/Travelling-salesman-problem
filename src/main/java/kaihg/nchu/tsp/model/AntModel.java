@@ -148,6 +148,13 @@ public class AntModel implements AlgorithmModel {
         return this.shortestTour;
     }
 
+    @Override
+    public Integer[][] getAllPossibleTour() {
+
+        //TODO
+        return new Integer[0][];
+    }
+
     public Integer[] getShortestTour(){
         return bestTour;
     }

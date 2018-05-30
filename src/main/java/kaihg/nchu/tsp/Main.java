@@ -1,5 +1,6 @@
 package kaihg.nchu.tsp;
 
+import kaihg.nchu.tsp.model.AlgorithmModel;
 import kaihg.nchu.tsp.model.AntModel;
 import kaihg.nchu.tsp.util.FileParser;
 import kaihg.nchu.tsp.vo.City;
@@ -19,13 +20,19 @@ public class Main {
 
         City[] cities = FileParser.parseCityFromFile(args[0]);
         Config config = FileParser.parseConfigFromFile(args[1]);
-        AntModel model = new AntModel(config.numAnts, config.iteration, cities, config);
 
+        startByAntModel(config.numAnts, config.iteration, cities, config);
+
+    }
+
+    private static AlgorithmModel startByAntModel(int numAnts, int iteration, City[] cities, Config config) throws IOException {
+        AntModel model =  new AntModel(numAnts, config.iteration, cities, config);
 
         StringBuilder logger = new StringBuilder();
         int seed = new Random().nextInt();
 
         System.out.println("seed is " + seed);
+        long time = System.currentTimeMillis();
         model.init(seed);
         for (int i = 0; i < config.iteration; i++) {
             model.iterationOnce();
@@ -39,9 +46,12 @@ public class Main {
         }
 
         System.out.println(logger.toString());
+        System.out.println("time : "+(System.currentTimeMillis() - time));
+        saveToFile(seed, model.getShortestTourDistance(), model.getShortestTour());
 
-//        saveToFile(seed, model.getShortestTourDistance(), model.getShortestTour());
+        return model;
     }
+
 
     private static void saveToFile(int seed, double shortestTourDistance, Integer[] shortestTour) throws IOException {
         FileWriter writer = new FileWriter("C:\\Users\\kaihg\\Documents\\NCHU_AI\\tour.txt");

@@ -5,4 +5,6 @@ public interface AlgorithmModel {
     void init(int seed);
     void iterationOnce();
 
+    double getShortestTourDistance();
+    Integer[][] getAllPossibleTour();
 }
