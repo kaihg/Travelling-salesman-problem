@@ -1,8 +1,6 @@
 package kaihg.nchu.tsp.vo;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 public class Ant {
@@ -25,7 +23,7 @@ public class Ant {
         tour = new int[citySize];
     }
 
-    public void setRandom(Random random){
+    public void setRandom(Random random) {
         this.random = random;
     }
 
@@ -88,8 +86,13 @@ public class Ant {
         return maxIndex;
     }
 
-    private boolean isCityArrival(int city){
-        return Arrays.binarySearch(tour,city) != -1;
+    private boolean isCityArrival(int city) {
+        for (int i = 0; i <= pointer; i++) {
+            if (tour[i] == city) {
+                return true;
+            }
+        }
+        return false;
     }
 
     int findNextCity(double[][] pheroTable, double[][] distTable, double[] probAry) {
