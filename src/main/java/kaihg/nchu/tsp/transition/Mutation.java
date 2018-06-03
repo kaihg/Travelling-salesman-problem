@@ -35,11 +35,11 @@ public class Mutation implements ITransition<int[][]> {
 
     @Override
     public void update(int[][] source, int[][] target) {
-        int index = 0;
-        for (int[] tour : source) {
-            System.arraycopy(source,0,target,0,target.length);
+        for (int i = 0; i < source.length; i++) {
+            int[] tour = source[i];
+            int[] tar = target[i];
+            System.arraycopy(source[i], 0, tar, 0, tar.length);
             if (random.nextDouble() < rate) {
-                int[] tar = target[index];
                 int index1 = random.nextInt(tour.length);
                 int index2 = random.nextInt(tour.length);
 

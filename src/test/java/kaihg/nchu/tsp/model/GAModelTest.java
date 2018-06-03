@@ -1,6 +1,7 @@
 package kaihg.nchu.tsp.model;
 
 import kaihg.nchu.tsp.evalutor.CycleEvaluator;
+import kaihg.nchu.tsp.transition.CycleCrossover;
 import kaihg.nchu.tsp.transition.Mutation;
 import kaihg.nchu.tsp.transition.PMCrossover;
 import kaihg.nchu.tsp.util.FileParser;
@@ -18,15 +19,14 @@ public class GAModelTest {
 
     private GAModel model;
     private double cxRate;
+    private int cityCount;
 
     @Before
     public void setUp() throws Exception {
         City[] cities = FileParser.parseCityFromFile("eil51.tsp");
-        cities = Arrays.copyOfRange(cities,0,5);
-
-
         GAConfig gaConfig = FileParser.parseGAConfigFromFile("gaConfig.json");
         cxRate = gaConfig.crossoverRate;
+        cityCount = cities.length;
 
         model = new GAModel(cities, gaConfig);
 
@@ -36,17 +36,35 @@ public class GAModelTest {
 
     @Test
     public void testPMX() {
-        int seed = new Random().nextInt();
+//        int seed = new Random().nextInt();
+        int seed = 7777;
         model.setCrossover(new PMCrossover(cxRate, seed));
 
         model.init(seed);
         model.iterationOnce();
         double score = model.getShortestTourDistance();
-        System.out.println("Initial score : " + score);
-        for (int i = 0; i < 100; i++) {
+        System.out.println("Initial PMX score : " + score);
+        for (int i = 0; i < 1000; i++) {
             model.iterationOnce();
         }
         System.out.println("End score : " + model.getShortestTourDistance());
-        Assert.assertTrue(score > model.getShortestTourDistance());
+        Assert.assertTrue(score >= model.getShortestTourDistance());
+    }
+
+    @Test
+    public void testCX() {
+//        int seed = new Random().nextInt();
+        int seed = 7777;
+        model.setCrossover(new CycleCrossover(cxRate,seed,cityCount));
+
+        model.init(seed);
+        model.iterationOnce();
+        double score = model.getShortestTourDistance();
+        System.out.println("Initial CX score : " + score);
+        for (int i = 0; i < 1000; i++) {
+            model.iterationOnce();
+        }
+        System.out.println("End score : " + model.getShortestTourDistance());
+        Assert.assertTrue(score >= model.getShortestTourDistance());
     }
 }

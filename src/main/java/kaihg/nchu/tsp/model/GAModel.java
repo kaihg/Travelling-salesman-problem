@@ -77,6 +77,15 @@ public class GAModel implements AlgorithmModel {
         this.mutation = mutation;
     }
 
+    private boolean checkNotSame(int[][] tours){
+        for (int[] tour : tours){
+            if (Arrays.stream(tour).distinct().count() != tour.length){
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void iterationOnce() {
         double[] fitnessScores = fitnessFunction(current);
@@ -84,8 +93,13 @@ public class GAModel implements AlgorithmModel {
 
 //        crossover.update(current);
 //        mutation.update(current);
+
+        checkNotSame(selected);
+
         crossover.update(selected, temp1);
+        checkNotSame(temp1);
         mutation.update(temp1, temp2);
+        checkNotSame(temp2);
 
 //        double[] fitnessScores2 = fitnessFunction(temp2);
 //        int[][] selected2 = select(temp2, fitnessScores);

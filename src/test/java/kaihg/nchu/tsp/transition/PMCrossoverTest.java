@@ -49,8 +49,8 @@ public class PMCrossoverTest {
         int[] target1 = new int[8];
         int[] target2 = new int[8];
 
-        transition.update(new int[][]{src1, src2}, new int[][]{target1, target2});
-//        transition.cross(src1,src2, 3, 5, target1, target2);
+//        transition.update(new int[][]{src1, src2}, new int[][]{target1, target2});
+        transition.cross(src1,src2, 3, 5, target1, target2);
 
         Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, src1);
         Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, target1);

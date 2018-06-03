@@ -1,5 +1,5 @@
 {
-  "populationSize": 2,
+  "populationSize": 50,
   "crossoverRate": 0.6,
   "mutationRate": 0.1,
 
