@@ -51,11 +51,11 @@ public class Ant {
         this.tour[++pointer] = num;
     }
 
-    public void setTour(int[] tour){
+    public void setTour(int[] tour) {
         this.tour = tour;
     }
 
-    public void setTourDistance(double distance){
+    public void setTourDistance(double distance) {
         this.tourDistance = distance;
     }
 
@@ -130,14 +130,23 @@ public class Ant {
             }
         }
 
-        return cities - 1;
+
+//        return cities - 1;
+        // 機率太低什麼都沒挑到，挑 phero 最大值
+        return getLocalMaxPhero(pheroTable, currentCity);
+//        throw new RuntimeException("all 0 !!!");
     }
 
     private double getProbability(double[][] pheroTable, double[][] distTable, int currentIndex, int city) {
         if (isCityArrival(city)) {
             return 0;
         } else {
-            return Math.pow(pheroTable[currentIndex][city], pheroRate) * Math.pow(1 / distTable[currentIndex][city], distRate);
+            double probability = Math.pow(pheroTable[currentIndex][city], pheroRate) * Math.pow(1 / distTable[currentIndex][city], distRate);
+            if (probability == 0) {
+                return Double.MIN_VALUE;
+            } else {
+                return probability;
+            }
         }
     }
 }

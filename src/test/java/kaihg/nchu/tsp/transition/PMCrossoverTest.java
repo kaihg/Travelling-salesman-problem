@@ -41,4 +41,22 @@ public class PMCrossoverTest {
         Assert.assertArrayEquals(new int[]{3, 7, 8, 4, 5, 6, 2, 1}, target2);
 
     }
+
+    @Test
+    public void testCrossoverSame() {
+        int[] src1 = {1, 2, 3, 4, 5, 6, 7, 8};
+        int[] src2 = {1, 2, 3, 4, 5, 6, 7, 8};
+        int[] target1 = new int[8];
+        int[] target2 = new int[8];
+
+        transition.update(new int[][]{src1, src2}, new int[][]{target1, target2});
+//        transition.cross(src1,src2, 3, 5, target1, target2);
+
+        Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, src1);
+        Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, target1);
+
+        Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, src2);
+        Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, target2);
+
+    }
 }

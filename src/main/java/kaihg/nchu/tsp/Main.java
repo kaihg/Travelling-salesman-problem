@@ -28,38 +28,39 @@ public class Main {
     }
 
     private static void startHyperModel(City[] cities, Config config, GAConfig gaConfig) {
-        System.out.println("Run "+config.iteration + " times");
+        System.out.println("Run " + config.iteration + " times");
 
         HyperRunner runner;
         // only ANT
-        runner = new HyperRunner(cities,config,gaConfig);
-        runner.start(config.iteration,false);
-        runner.showMessage();
+//        runner = new HyperRunner(cities, config, gaConfig);
+//        runner.start(config.iteration, false);
+//        runner.showMessage();
 
         gaConfig.crossoverType = "PMX";
-        runner = new HyperRunner(cities,config,gaConfig);
-        runner.start(config.iteration,true);
+        runner = new HyperRunner(cities, config, gaConfig);
+        runner.start(config.iteration, true);
         runner.showMessage();
 
         gaConfig.crossoverType = "CX";
-        runner = new HyperRunner(cities,config,gaConfig);
-        runner.start(config.iteration,true);
+        runner = new HyperRunner(cities, config, gaConfig);
+        runner.start(config.iteration, true);
         runner.showMessage();
     }
 
     private static AlgorithmModel startByAntModel(int numAnts, int iteration, City[] cities, Config config) throws IOException {
-        AntModel model =  new AntModel(numAnts, cities, config);
+        AntModel model = new AntModel(numAnts, cities, config);
 
         StringBuilder logger = new StringBuilder();
-
 
 
         long time = System.currentTimeMillis();
 
         int runTime = 5;
         double score = 0;
-        for (int run = 0;run<runTime;run++){
-            int seed = new Random().nextInt();
+        int seed = 0;
+        Random random = new Random();
+        for (int run = 0; run < runTime; run++) {
+            seed = random.nextInt();
             System.out.println("seed is " + seed);
 
             model.init(seed);
@@ -82,11 +83,11 @@ public class Main {
             logger.append(city + 1).append(",");
         }
 
-        logger.append("\navg score is ").append( score/runTime);
+        logger.append("\navg score is ").append(score / runTime);
 
         System.out.println(logger.toString());
-        System.out.println("time : "+(System.currentTimeMillis() - time));
-//        saveToFile(seed, model.getShortestTourDistance(), model.getShortestTour());
+        System.out.println("time : " + (System.currentTimeMillis() - time));
+        saveToFile(seed, model.getShortestTourDistance(), model.getShortestTour());
 
         return model;
     }

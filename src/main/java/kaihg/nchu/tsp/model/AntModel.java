@@ -174,7 +174,9 @@ public class AntModel implements AlgorithmModel {
             ant.setTourDistance(sumTourDistance(tour));
         }
 
-        pheromoneUpdate(ants);
+        List<Ant> goodAnts = ants.stream().sorted(Comparator.comparingDouble(Ant::getTourDistance)).limit(3).collect(Collectors.toList());
+
+        pheromoneUpdate(goodAnts);
     }
 
     private double sumTourDistance(int[] tour) {

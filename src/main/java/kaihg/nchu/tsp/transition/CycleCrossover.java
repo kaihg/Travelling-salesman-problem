@@ -10,7 +10,7 @@ public class CycleCrossover implements ITransition<int[][]> {
     private Random random;
 
     private boolean[] flags;
-//    private TempPair[] tempPairs;
+    //    private TempPair[] tempPairs;
     private Map<Integer, TempPair> tempPairMap;
     private List<List<TempPair>> cycles;
 
@@ -36,22 +36,23 @@ public class CycleCrossover implements ITransition<int[][]> {
     public void update(int[][] source, int[][] target) {
         for (int i = 0, size = source.length / 2; i < size; i++) {
             if (random.nextDouble() > crossRate) {
-                continue;
+                System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+                System.arraycopy(source[i + size], 0, target[i + size], 0, source[i + size].length);
+            } else {
+                int[] parent1 = source[i];
+                int[] parent2 = source[i + size];
+
+                int[] child1 = target[i];
+                int[] child2 = target[i + size];
+
+                Arrays.fill(flags, false);
+                cycles.clear();
+                tempPairMap.clear();
+
+                createLookUpMap(parent1, parent2);
+                findCycles(parent1, parent2);
+                copyToTarget(child1, child2);
             }
-
-            int[] parent1 = source[i];
-            int[] parent2 = source[i + size];
-
-            int[] child1 = target[i];
-            int[] child2 = target[i + size];
-
-            Arrays.fill(flags, false);
-            cycles.clear();
-            tempPairMap.clear();
-
-            createLookUpMap(parent1, parent2);
-            findCycles(parent1, parent2);
-            copyToTarget(child1, child2);
         }
     }
 
@@ -63,7 +64,7 @@ public class CycleCrossover implements ITransition<int[][]> {
             if (pair == null) {
                 pair = new TempPair();
 //                tempPairs[parent2[i]] = pair;
-                tempPairMap.put(parent2[i],pair);
+                tempPairMap.put(parent2[i], pair);
             }
 
             pair.index = i;

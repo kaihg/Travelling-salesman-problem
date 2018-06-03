@@ -47,11 +47,22 @@ public class GAModel implements AlgorithmModel {
         this.random = new Random(seed);
 
         for (int i = 0; i < current.length; i++) {
-            int[] item = current[i];
-            for (int j = 0; j < bitCount; j++) {
-                item[j] = random.nextInt(2);
-            }
+            createRandomTour(current[i]);
         }
+    }
+
+    private int[] createRandomTour(int[] space) {
+        for (int i = 0; i < space.length; i++) {
+            space[i] = i;
+        }
+        for (int i = space.length - 1; i > 0; i--) {
+            int index = random.nextInt(i + 1);
+
+            int temp = space[index];
+            space[index] = space[i];
+            space[i] = temp;
+        }
+        return space;
     }
 
     public void setEvaluator(IEvaluator evaluator) {
@@ -76,8 +87,8 @@ public class GAModel implements AlgorithmModel {
         crossover.update(selected, temp1);
         mutation.update(temp1, temp2);
 
-//        double[] fitnessScores = fitnessFunction(current);
-//        int[][] selected = select(current, fitnessScores);
+//        double[] fitnessScores2 = fitnessFunction(temp2);
+//        int[][] selected2 = select(temp2, fitnessScores);
 
         changeCurrentPopulation(temp2, current);
 
@@ -154,7 +165,7 @@ public class GAModel implements AlgorithmModel {
     }
 
     protected int judgmentWinner(double[] scoreMap, int competitor, int winner) {
-        return scoreMap[competitor] > scoreMap[winner] ? competitor : winner;
+        return scoreMap[competitor] < scoreMap[winner] ? competitor : winner;
     }
 
     @Override
@@ -166,9 +177,9 @@ public class GAModel implements AlgorithmModel {
     public int[] getBestTour() {
         double dist = Double.MAX_VALUE;
         int index = 0;
-        for ( int i = 0; i < scoreMap.length ; i++){
+        for (int i = 0; i < scoreMap.length; i++) {
             double d = scoreMap[i];
-            if (d < dist){
+            if (d < dist) {
                 dist = d;
                 index = i;
             }

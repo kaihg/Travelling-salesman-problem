@@ -49,7 +49,7 @@ public class PMCrossover implements ITransition<int[][]> {
         }
     }
 
-    private void changeElement(int[] tour1, int startIndex, int endIndex,int[] sub2, Map<Integer, Integer> crossMap, int[] target) {
+    private void changeElement(int[] tour1, int startIndex, int endIndex, int[] sub2, Map<Integer, Integer> crossMap, int[] target) {
         for (int i = 0, size = tour1.length; i < size; i++) {
 
             if (i >= startIndex && i <= endIndex) {
@@ -59,8 +59,13 @@ public class PMCrossover implements ITransition<int[][]> {
                 int city = tour1[i];
                 if (crossMap.containsKey(city)) {
                     Integer toBeReplace = crossMap.get(city);
+
+                    int test = 0;
                     while (crossMap.containsKey(toBeReplace)) {
                         toBeReplace = crossMap.get(toBeReplace);
+                        if (test++ > 100){
+                            System.out.println(test);
+                        }
                     }
 
                     city = toBeReplace;
@@ -70,16 +75,16 @@ public class PMCrossover implements ITransition<int[][]> {
         }
     }
 
-    void cross(int[] tour1,int[] tour2, int startIndex, int endIndex ,int[] target1, int[] target2) {
-        int[] sub1 = Arrays.copyOfRange(tour1,startIndex,endIndex+1);
-        int[] sub2 = Arrays.copyOfRange(tour2,startIndex,endIndex+1);
+    void cross(int[] tour1, int[] tour2, int startIndex, int endIndex, int[] target1, int[] target2) {
+        int[] sub1 = Arrays.copyOfRange(tour1, startIndex, endIndex + 1);
+        int[] sub2 = Arrays.copyOfRange(tour2, startIndex, endIndex + 1);
 
         // save to map
         createMap(sub1, sub2);
-        changeElement(tour1, startIndex, endIndex, sub2, crossMap,target1);
+        changeElement(tour1, startIndex, endIndex, sub2, crossMap, target1);
 
         createMap(sub2, sub1);
-        changeElement(tour2, startIndex, endIndex, sub1, crossMap,target2);
+        changeElement(tour2, startIndex, endIndex, sub1, crossMap, target2);
 
 //        for (int i = startIndex; i <= endIndex; i++) {
 //            int temp = tour1[i];
@@ -93,17 +98,19 @@ public class PMCrossover implements ITransition<int[][]> {
     public void update(int[][] source, int[][] target) {
         for (int i = 0, size = source.length / 2; i < size; i++) {
             if (random.nextDouble() > rate) {
-                continue;
+                // 不執行，只複製
+                System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+                System.arraycopy(source[i + size], 0, target[i + size], 0, source[i + size].length);
+            } else {
+                int[] ant1 = source[i];
+                int[] ant2 = source[i + size];
+
+                int citySize = ant1.length;
+                int startIndex = random.nextInt(citySize);
+                int endIndex = random.nextInt(citySize - startIndex) + startIndex;
+
+                cross(ant1, ant2, startIndex, endIndex, target[i], target[i + size]);
             }
-
-            int[] ant1 = source[i];
-            int[] ant2 = source[i + size];
-
-            int citySize = ant1.length;
-            int startIndex = random.nextInt(citySize);
-            int endIndex = random.nextInt(citySize - startIndex) + startIndex;
-
-            cross(ant1, ant2, startIndex, endIndex,target[i], target[i+size]);
         }
     }
 }

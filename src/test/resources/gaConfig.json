@@ -1,0 +1,7 @@
+{
+  "populationSize": 2,
+  "crossoverRate": 0.6,
+  "mutationRate": 0.1,
+
+  "crossoverType":"PMX"
+}
