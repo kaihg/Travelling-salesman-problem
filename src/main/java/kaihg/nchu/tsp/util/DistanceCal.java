@@ -8,4 +8,5 @@ public class DistanceCal {
         double dist = Math.pow(c1.x - c2.x, 2) + Math.pow(c1.y - c2.y, 2);
         return Math.sqrt(dist);
     }
+
 }

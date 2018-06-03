@@ -6,5 +6,8 @@ public interface AlgorithmModel {
     void iterationOnce();
 
     double getShortestTourDistance();
-    Integer[][] getAllPossibleTour();
+    int[] getBestTour();
+    int[][] getAllPossibleTour();
+    void updatePossibleTours(int[][] allTours);
+
 }

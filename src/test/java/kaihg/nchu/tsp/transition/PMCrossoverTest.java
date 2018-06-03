@@ -17,11 +17,11 @@ public class PMCrossoverTest {
         transition = new PMCrossover(0);
 
         int[] ant1 = {
-                1,2,3,4,5,6,7,8
+                1, 2, 3, 4, 5, 6, 7, 8
         };
 
         int[] ant2 = {
-                3,7,5,1,6,8,2,4
+                3, 7, 5, 1, 6, 8, 2, 4
         };
 
         ants = new int[][]{ant1, ant2};
@@ -29,11 +29,16 @@ public class PMCrossoverTest {
 
     @Test
     public void testCrossover() {
-        transition.cross(ants[0], ants[1], 3, 5);
+        int[] target1 = new int[8];
+        int[] target2 = new int[8];
 
-        Assert.assertArrayEquals(new int[]{4, 2, 3, 1, 6, 8, 7, 5}, ants[0]);
+        transition.cross(ants[0], ants[1], 3, 5, target1, target2);
 
-        Assert.assertArrayEquals(new int[]{3, 7, 8, 4, 5, 6, 2, 1}, ants[1]);
+        Assert.assertArrayEquals(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, ants[0]);
+        Assert.assertArrayEquals(new int[]{4, 2, 3, 1, 6, 8, 7, 5}, target1);
+
+        Assert.assertArrayEquals(new int[]{3, 7, 5, 1, 6, 8, 2, 4}, ants[1]);
+        Assert.assertArrayEquals(new int[]{3, 7, 8, 4, 5, 6, 2, 1}, target2);
 
     }
 }

@@ -1,17 +1,21 @@
 package kaihg.nchu.tsp.model;
 
+import kaihg.nchu.tsp.evalutor.IEvaluator;
 import kaihg.nchu.tsp.util.DistanceCal;
 import kaihg.nchu.tsp.vo.Ant;
 import kaihg.nchu.tsp.vo.City;
 import kaihg.nchu.tsp.vo.Config;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AntModel implements AlgorithmModel {
+
+    private IEvaluator evaluator;
 
     private double evaporationRate;
     private double constantQ;
@@ -22,17 +26,19 @@ public class AntModel implements AlgorithmModel {
     private List<Ant> ants;
     private Random random;
 
+    private int[][] outputs;
     private double[] tempAry;
 
     private double shortestTour = Double.MAX_VALUE;
     private int[] bestTour;
 
-    public AntModel(int numAnt, int iteration, City[] cities, Config config) {
+    public AntModel(int numAnt, City[] cities, Config config) {
         this.cities = cities;
 
         this.pheromoneTable = new double[cities.length][cities.length];
         this.distanceTable = new double[cities.length][cities.length];
 
+        this.outputs = new int[numAnt][cities.length];
         this.tempAry = new double[cities.length];
         this.bestTour = new int[cities.length];
 
@@ -40,7 +46,7 @@ public class AntModel implements AlgorithmModel {
         this.evaporationRate = config.evaporationRate;
 
 
-        Stream<Ant> stream= Stream.generate(() -> {
+        Stream<Ant> stream = Stream.generate(() -> {
             Ant ant = new Ant(cities.length);
             ant.setPheroRate(config.pheromoneRate);
             ant.setDistRate(config.distanceRate);
@@ -49,6 +55,7 @@ public class AntModel implements AlgorithmModel {
         }).limit(numAnt);
 
         this.ants = stream.collect(Collectors.toList());
+
     }
 
     @Override
@@ -60,16 +67,21 @@ public class AntModel implements AlgorithmModel {
         initPheromone();
 
         // 設定隨機起始點
-        ants.forEach((ant) -> {
-            ant.resetTour();
-//            ant.moveToCity(random.nextInt(cities.length));
-        });
+        //            ant.moveToCity(random.nextInt(cities.length));
+        ants.forEach(Ant::resetTour);
 
+        this.shortestTour = Double.MAX_VALUE;
     }
 
+    public void setEvaluator(IEvaluator evaluator) {
+        this.evaluator = evaluator;
+    }
 
     private void initPheromone() {
         double totalDistance = sumAllDistance();
+        for (double[] one : this.pheromoneTable) {
+            Arrays.fill(one,0);
+        }
 
         int size = cities.length;
 
@@ -131,7 +143,7 @@ public class AntModel implements AlgorithmModel {
         if (ant.getTourDistance() < shortestTour) {
             shortestTour = ant.getTourDistance();
 //            ant.getTour().toArray(bestTour);
-            System.arraycopy(ant.getTour(),0,bestTour,0,cities.length);
+            System.arraycopy(ant.getTour(), 0, bestTour, 0, cities.length);
         }
     }
 
@@ -140,13 +152,36 @@ public class AntModel implements AlgorithmModel {
     }
 
     @Override
-    public Integer[][] getAllPossibleTour() {
-
-        //TODO
-        return new Integer[0][];
+    public int[] getBestTour() {
+        return bestTour;
     }
 
-    public int[] getShortestTour(){
+    @Override
+    public int[][] getAllPossibleTour() {
+        for (int i = 0, length = this.bestTour.length; i < ants.size(); i++) {
+            System.arraycopy(ants.get(i).getTour(), 0, outputs[i], 0, length);
+        }
+        return outputs;
+    }
+
+    @Override
+    public void updatePossibleTours(int[][] allTours) {
+        for (int i = 0; i < allTours.length; i++) {
+            Ant ant = ants.get(i);
+            int[] tour = allTours[i];
+
+            ant.setTour(tour);
+            ant.setTourDistance(sumTourDistance(tour));
+        }
+
+        pheromoneUpdate(ants);
+    }
+
+    private double sumTourDistance(int[] tour) {
+        return evaluator.evaluate(tour);
+    }
+
+    public int[] getShortestTour() {
         return bestTour;
     }
 

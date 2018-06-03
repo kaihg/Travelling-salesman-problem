@@ -5,6 +5,7 @@ import kaihg.nchu.tsp.model.AntModel;
 import kaihg.nchu.tsp.util.FileParser;
 import kaihg.nchu.tsp.vo.City;
 import kaihg.nchu.tsp.vo.Config;
+import kaihg.nchu.tsp.vo.GAConfig;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,24 +21,60 @@ public class Main {
 
         City[] cities = FileParser.parseCityFromFile(args[0]);
         Config config = FileParser.parseConfigFromFile(args[1]);
+        GAConfig gaConfig = FileParser.parseGAConfigFromFile(args[2]);
 
-        startByAntModel(config.numAnts, config.iteration, cities, config);
+//        startByAntModel(config.numAnts, config.iteration, cities, config);
+        startHyperModel(cities,config,gaConfig);
+    }
 
+    private static void startHyperModel(City[] cities, Config config, GAConfig gaConfig) {
+        System.out.println("Run "+config.iteration + " times");
+
+        HyperRunner runner;
+        // only ANT
+        runner = new HyperRunner(cities,config,gaConfig);
+        runner.start(config.iteration,false);
+        runner.showMessage();
+
+        gaConfig.crossoverType = "PMX";
+        runner = new HyperRunner(cities,config,gaConfig);
+        runner.start(config.iteration,true);
+        runner.showMessage();
+
+        gaConfig.crossoverType = "CX";
+        runner = new HyperRunner(cities,config,gaConfig);
+        runner.start(config.iteration,true);
+        runner.showMessage();
     }
 
     private static AlgorithmModel startByAntModel(int numAnts, int iteration, City[] cities, Config config) throws IOException {
-        AntModel model =  new AntModel(numAnts, config.iteration, cities, config);
+        AntModel model =  new AntModel(numAnts, cities, config);
 
         StringBuilder logger = new StringBuilder();
-        int seed = new Random().nextInt();
 
-        System.out.println("seed is " + seed);
+
+
         long time = System.currentTimeMillis();
-        model.init(seed);
-        for (int i = 0; i < config.iteration; i++) {
-            model.iterationOnce();
+
+        int runTime = 5;
+        double score = 0;
+        for (int run = 0;run<runTime;run++){
+            int seed = new Random().nextInt();
+            System.out.println("seed is " + seed);
+
+            model.init(seed);
+            for (int i = 0; i < iteration; i++) {
+                model.iterationOnce();
+            }
+            score += model.getShortestTourDistance();
             logger.append(model.getShortestTourDistance()).append("\n");
         }
+
+//        model.init(seed);
+//        for (int i = 0; i < iteration; i++) {
+//            model.iterationOnce();
+//            logger.append(model.getShortestTourDistance()).append("\n");
+//        }
 
         // print tour
         int[] tour = model.getShortestTour();
@@ -45,9 +82,11 @@ public class Main {
             logger.append(city + 1).append(",");
         }
 
+        logger.append("\navg score is ").append( score/runTime);
+
         System.out.println(logger.toString());
         System.out.println("time : "+(System.currentTimeMillis() - time));
-        saveToFile(seed, model.getShortestTourDistance(), model.getShortestTour());
+//        saveToFile(seed, model.getShortestTourDistance(), model.getShortestTour());
 
         return model;
     }

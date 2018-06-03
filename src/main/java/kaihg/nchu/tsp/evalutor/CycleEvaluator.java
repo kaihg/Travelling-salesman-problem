@@ -8,6 +8,8 @@ public class CycleEvaluator implements IEvaluator {
     private double[][] cityDistancesTable;
 
     public CycleEvaluator(City[] cities){
+        this.cityDistancesTable = new double[cities.length][cities.length];
+
         int size = cities.length;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -25,7 +27,7 @@ public class CycleEvaluator implements IEvaluator {
     }
 
     @Override
-    public double evaluate(Integer[] tour) {
+    public double evaluate(int[] tour) {
         double sum = 0;
         int cities = tour.length -1;
         for (int i=0;i<cities;i++){

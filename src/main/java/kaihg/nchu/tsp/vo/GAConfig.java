@@ -4,6 +4,8 @@ public class GAConfig {
 
     public int populationSize;
     public double crossoverRate;
-    public double muationRate;
+    public double mutationRate;
+
+    public String crossoverType;
 
 }

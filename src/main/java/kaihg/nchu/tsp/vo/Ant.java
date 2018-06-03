@@ -51,6 +51,14 @@ public class Ant {
         this.tour[++pointer] = num;
     }
 
+    public void setTour(int[] tour){
+        this.tour = tour;
+    }
+
+    public void setTourDistance(double distance){
+        this.tourDistance = distance;
+    }
+
     public void startTour(double[][] pheroTable, double[][] distTable, double[] probAry) {
         int lastCity = this.tour[0];
         // 起始點已設定，所以要扣掉一個
@@ -113,7 +121,7 @@ public class Ant {
         }
 
         // 射輪盤
-        double probability = new Random().nextDouble() * total;
+        double probability = random.nextDouble() * total;
         for (int i = 0; i < cities; i++) {
             if (probability < probAry[i]) {
                 return i;
