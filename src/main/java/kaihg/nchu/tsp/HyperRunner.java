@@ -7,6 +7,7 @@ import kaihg.nchu.tsp.model.AntModel;
 import kaihg.nchu.tsp.model.GAModel;
 import kaihg.nchu.tsp.transition.CycleCrossover;
 import kaihg.nchu.tsp.transition.Mutation;
+import kaihg.nchu.tsp.transition.OrderCrossover;
 import kaihg.nchu.tsp.transition.PMCrossover;
 import kaihg.nchu.tsp.vo.City;
 import kaihg.nchu.tsp.vo.Config;
@@ -51,6 +52,7 @@ public class HyperRunner {
                 ((GAModel) this.gaModel).setCrossover(new CycleCrossover(gaConfig.crossoverRate, motherRandom.nextInt(), cities.length));
                 break;
             case "OX":
+                ((GAModel) this.gaModel).setCrossover(new OrderCrossover(gaConfig.crossoverRate,motherRandom.nextInt()));
                 break;
             case "OMCP":
                 break;
