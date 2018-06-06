@@ -18,9 +18,16 @@ public class Ant {
 
     private double tourDistance;
 
+    // for tournament
+    private int[] tempTour;
+
+    private boolean[] arrivalFlag;
 
     public Ant(int citySize) {
         tour = new int[citySize];
+        tempTour = new int[citySize];
+        arrivalFlag = new boolean[citySize];
+
     }
 
     public void setRandom(Random random) {
@@ -41,6 +48,7 @@ public class Ant {
 
     public void resetTour() {
         Arrays.fill(this.tour, -1);
+        Arrays.fill(arrivalFlag, false);
 
         this.pointer = -1;
         this.tourDistance = 0;
@@ -49,6 +57,7 @@ public class Ant {
     public void moveToCity(int num) {
 //        this.tour.add(num);
         this.tour[++pointer] = num;
+        arrivalFlag[num] = true;
     }
 
     public void setTour(int[] tour) {
@@ -95,12 +104,13 @@ public class Ant {
     }
 
     private boolean isCityArrival(int city) {
-        for (int i = 0; i <= pointer; i++) {
-            if (tour[i] == city) {
-                return true;
-            }
-        }
-        return false;
+//        for (int i = 0; i <= pointer; i++) {
+//            if (tour[i] == city) {
+//                return true;
+//            }
+//        }
+//        return false;
+        return arrivalFlag[city];
     }
 
     int findNextCity(double[][] pheroTable, double[][] distTable, double[] probAry) {
@@ -112,6 +122,48 @@ public class Ant {
             return getLocalMaxPhero(pheroTable, currentCity);
         }
 
+        return tournamentSelect(pheroTable,distTable);
+//        return rouletteSelect(pheroTable, distTable, probAry);
+    }
+
+    private int tournamentSelect(double[][] pheroTable, double[][] distTable) {
+        int cities = distTable.length;
+        int currentCity = this.tour[pointer];
+//        cityMap.clear();
+
+//        // 記錄已走過的點
+//        for (int i = 0; i <= pointer; i++) {
+//            cityMap.add(tour[i]);
+//        }
+
+        // 找出尚未走過的點
+        int mark = 0;
+        for (int i = 0; i < cities; i++) {
+            if (!isCityArrival(i)) {
+                tempTour[mark] = i;
+                mark++;
+            }
+        }
+
+         int retryTimes = (mark -1) ;
+        // 開始競賽
+        int city = tempTour[random.nextInt(mark)];
+        double score = getProbability(pheroTable, distTable, currentCity, city);
+        for (int i = 0; i < retryTimes; i++) {
+            int p2 = tempTour[random.nextInt(mark)];
+            double comp = getProbability(pheroTable, distTable, currentCity, p2);
+            if (score < comp) {
+                city = p2;
+                score = comp;
+            }
+        }
+
+        return city;
+    }
+
+    private int rouletteSelect(double[][] pheroTable, double[][] distTable, double[] probAry) {
+        int cities = distTable.length;
+        int currentCity = this.tour[pointer];
 
         double total = 0;
         for (int i = 0; i < cities; i++) {
@@ -130,11 +182,9 @@ public class Ant {
             }
         }
 
-
 //        return cities - 1;
         // 機率太低什麼都沒挑到，挑 phero 最大值
         return getLocalMaxPhero(pheroTable, currentCity);
-//        throw new RuntimeException("all 0 !!!");
     }
 
     private double getProbability(double[][] pheroTable, double[][] distTable, int currentIndex, int city) {

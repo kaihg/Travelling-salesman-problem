@@ -37,4 +37,13 @@ public class AntModelTest {
         Assert.assertEquals( Arrays.stream(tour).distinct().count(),51);
 
     }
+
+    @Test
+    public void testTime() {
+        model.init(-708050255);
+        int iteration = 1000;
+        for (int i = 0; i < iteration; i++) {
+            model.iterationOnce();
+        }
+    }
 }

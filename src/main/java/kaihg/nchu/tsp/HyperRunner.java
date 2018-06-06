@@ -28,6 +28,8 @@ public class HyperRunner {
     private StringBuilder logger;
     private Random motherRandom;
 
+    private String gaCrossType;
+
     public HyperRunner(City[] cities, Config config, GAConfig gaConfig) {
         motherRandom = new Random(777);
 
@@ -41,6 +43,7 @@ public class HyperRunner {
 
     private void initGA(City[] cities, GAConfig gaConfig, IEvaluator evaluator) {
         this.gaModel = new GAModel(cities, gaConfig);
+        this.gaCrossType = gaConfig.crossoverType;
 
         ((GAModel) this.gaModel).setEvaluator(evaluator);
 //        ((GAModel) this.gaModel).setCrossover(new PMCrossover(gaConfig.crossoverRate, motherRandom.nextInt()));
@@ -52,7 +55,7 @@ public class HyperRunner {
                 ((GAModel) this.gaModel).setCrossover(new CycleCrossover(gaConfig.crossoverRate, motherRandom.nextInt(), cities.length));
                 break;
             case "OX":
-                ((GAModel) this.gaModel).setCrossover(new OrderCrossover(gaConfig.crossoverRate,motherRandom.nextInt()));
+                ((GAModel) this.gaModel).setCrossover(new OrderCrossover(gaConfig.crossoverRate, motherRandom.nextInt()));
                 break;
             case "OMCP":
                 break;
@@ -75,10 +78,12 @@ public class HyperRunner {
     public void start(int iteration, boolean withGA) {
         int runTime = 10;
         double score = 0;
+        double gaScore = 0;
         double bestOne = Double.MAX_VALUE;
+        double bestGA = Double.MAX_VALUE;
         int[] bestTour = null;
 
-        log("Run with" + (withGA ? "" : "out") + " GA");
+        log("Run with" + (withGA ? "" : "out") + " GA");    // + (withGA? " + "+this.gaCrossType : "")
 
         long time = System.currentTimeMillis();
         for (int run = 0; run < runTime; run++) {
@@ -90,13 +95,21 @@ public class HyperRunner {
 
             for (int i = 0; i < iteration; i++) {
 
-                this.antModel.iterationOnce();
+                int step = 300;
+                for (int j = 0; j < step; j++) {
+                    this.antModel.iterationOnce();
+                }
+                i += step;
+//                this.antModel.iterationOnce();
+
 
                 if (withGA) {
                     this.gaModel.updatePossibleTours(antModel.getAllPossibleTour());
-                    gaModel.iterationOnce();
-
+                    for (int j = 0; j < step; j++) {
+                        gaModel.iterationOnce();
+                    }
                     antModel.updatePossibleTours(gaModel.getAllPossibleTour());
+//                    i+=step;
                 }
 
 //            this.bestDistance = gaModel.getShortestTourDistance();
@@ -117,14 +130,20 @@ public class HyperRunner {
                 bestOne = localScore;
                 bestTour = antModel.getBestTour();
             }
+            double thisScore = gaModel.getShortestTourDistance();
+            gaScore += thisScore;
+            if (thisScore < bestGA) {
+                bestGA = thisScore;
+            }
         }
         score /= runTime;
+        gaScore /= runTime;
 
-        log("Done in " + (System.currentTimeMillis() - time) + "ms");
+        log("Done in " + (System.currentTimeMillis() - time) / 1000 + "s");
 //        log("The final result is \n" + Arrays.toString(gaModel.getBestTour()));
 //        log("The final result is \n" + Arrays.toString(antModel.getBestTour()));
-        log("The avg result is " + score);
-        log("And the best one is " + bestOne);
+        log("The avg result is ANT : " + score + ", GA : " + gaScore);
+        log("And the best one is ANT : " + bestOne+", GA : "+ bestGA);
         log(Arrays.toString(bestTour));
     }
 

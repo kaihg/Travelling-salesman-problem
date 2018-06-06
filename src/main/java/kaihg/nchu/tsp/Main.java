@@ -32,27 +32,28 @@ public class Main {
 
         HyperRunner runner;
         // only ANT
+        System.out.println("Basic ANT");
+        runner = new HyperRunner(cities, config, gaConfig);
+        runner.start(config.iteration, false);
+        runner.showMessage();
+
+//        System.out.println("Test GA-PMX");
+//        gaConfig.crossoverType = "PMX";
 //        runner = new HyperRunner(cities, config, gaConfig);
-//        runner.start(config.iteration, false);
+//        runner.start(config.iteration, true);
 //        runner.showMessage();
-
-        System.out.println("Test GA-PMX");
-        gaConfig.crossoverType = "PMX";
-        runner = new HyperRunner(cities, config, gaConfig);
-        runner.start(config.iteration, true);
-        runner.showMessage();
-
-        System.out.println("Test GA-CX");
-        gaConfig.crossoverType = "CX";
-        runner = new HyperRunner(cities, config, gaConfig);
-        runner.start(config.iteration, true);
-        runner.showMessage();
-
-        System.out.println("Test GA-OX");
-        gaConfig.crossoverType = "OX";
-        runner = new HyperRunner(cities, config, gaConfig);
-        runner.start(config.iteration, true);
-        runner.showMessage();
+//
+//        System.out.println("Test GA-CX");
+//        gaConfig.crossoverType = "CX";
+//        runner = new HyperRunner(cities, config, gaConfig);
+//        runner.start(config.iteration, true);
+//        runner.showMessage();
+//
+//        System.out.println("Test GA-OX");
+//        gaConfig.crossoverType = "OX";
+//        runner = new HyperRunner(cities, config, gaConfig);
+//        runner.start(config.iteration, true);
+//        runner.showMessage();
     }
 
     private static AlgorithmModel startByAntModel(int numAnts, int iteration, City[] cities, Config config) throws IOException {
