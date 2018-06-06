@@ -21,6 +21,7 @@ public class AntModel implements AlgorithmModel {
     private double constantQ;
     private double[][] pheromoneTable;
     private double[][] distanceTable;
+    private double[][] probilityTable;
     private City[] cities;
 
     private List<Ant> ants;
@@ -32,11 +33,15 @@ public class AntModel implements AlgorithmModel {
     private double shortestTour = Double.MAX_VALUE;
     private int[] bestTour;
 
+    private double pheromoneRate;
+    private double distanceRate;
+
     public AntModel(int numAnt, City[] cities, Config config) {
         this.cities = cities;
 
         this.pheromoneTable = new double[cities.length][cities.length];
         this.distanceTable = new double[cities.length][cities.length];
+        this.probilityTable = new double[cities.length][cities.length];
 
         this.outputs = new int[numAnt][cities.length];
         this.tempAry = new double[cities.length];
@@ -45,6 +50,8 @@ public class AntModel implements AlgorithmModel {
         this.constantQ = config.Q;
         this.evaporationRate = config.evaporationRate;
 
+        this.pheromoneRate = config.pheromoneRate;
+        this.distanceRate = config.distanceRate;
 
         Stream<Ant> stream = Stream.generate(() -> {
             Ant ant = new Ant(cities.length);
@@ -65,12 +72,25 @@ public class AntModel implements AlgorithmModel {
         this.ants.forEach(ant -> ant.setRandom(random));
         calDistance();
         initPheromone();
+        computerAllProbility();
 
         // 設定隨機起始點
         //            ant.moveToCity(random.nextInt(cities.length));
         ants.forEach(Ant::resetTour);
 
         this.shortestTour = Double.MAX_VALUE;
+    }
+
+    private void computerAllProbility(){
+        for (int i = 0; i < cities.length; i++) {
+            for (int j = 0; j <i; j++) {
+                double probability = Math.pow(pheromoneTable[i][j], pheromoneRate) * Math.pow(1 / distanceTable[i][j], distanceRate);
+                probability = Math.max(probability,Double.MIN_VALUE);   // 控制最小值
+//                probability = Math.min(probability,1);  // 控制最大值
+
+                probilityTable[i][j] = probilityTable[j][i] = probability;
+            }
+        }
     }
 
     public void setEvaluator(IEvaluator evaluator) {
@@ -133,10 +153,12 @@ public class AntModel implements AlgorithmModel {
         ants.forEach(ant -> {
             ant.resetTour();
             ant.moveToCity(random.nextInt(this.cities.length));
-            ant.startTour(pheromoneTable, distanceTable, tempAry);
+//            ant.startTour(pheromoneTable, distanceTable, tempAry);
+            ant.startTour(pheromoneTable, distanceTable, probilityTable);
         });
 
         pheromoneUpdate(ants);
+        computerAllProbility(); // 更新完費洛蒙，重新計算機率
 
         // compare to best
         Ant ant = ants.stream().min(Comparator.comparingDouble(Ant::getTourDistance)).get();
@@ -177,6 +199,7 @@ public class AntModel implements AlgorithmModel {
         List<Ant> goodAnts = ants.stream().sorted(Comparator.comparingDouble(Ant::getTourDistance)).limit(3).collect(Collectors.toList());
 
         pheromoneUpdate(goodAnts);
+        computerAllProbility();
     }
 
     private double sumTourDistance(int[] tour) {
@@ -187,7 +210,7 @@ public class AntModel implements AlgorithmModel {
         return bestTour;
     }
 
-    private void pheromoneUpdate(List<Ant> ants) {
+    void pheromoneUpdate(List<Ant> ants) {
         // 全部揮發
         for (int i = 0; i < cities.length; i++) {
             for (int j = 0; j < cities.length; j++) {

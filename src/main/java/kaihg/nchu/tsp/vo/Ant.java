@@ -82,6 +82,20 @@ public class Ant {
         this.tourDistance += distTable[lastCity][this.tour[0]];
     }
 
+    public void startTour(double[][]pheroTable,double[][] distTable, double[][] probAry) {
+        int lastCity = this.tour[0];
+        // 起始點已設定，所以要扣掉一個
+        for (int i = 1; i < probAry.length; i++) {
+            int nextCity = findNextCity(pheroTable, probAry);
+//            this.tour.add(nextCity);
+            moveToCity(nextCity);
+            this.tourDistance += distTable[lastCity][nextCity];
+            lastCity = nextCity;
+        }
+        // 要回到起點，所以要加最後一段
+        this.tourDistance += distTable[lastCity][this.tour[0]];
+    }
+
     public double getTourDistance() {
         return tourDistance;
     }
@@ -114,7 +128,7 @@ public class Ant {
     }
 
     int findNextCity(double[][] pheroTable, double[][] distTable, double[] probAry) {
-        int cities = distTable.length;
+//        int cities = distTable.length;
         int currentCity = this.tour[pointer];
 
         // 某機率下會直接使用最大值，減少計算量
@@ -126,15 +140,22 @@ public class Ant {
 //        return rouletteSelect(pheroTable, distTable, probAry);
     }
 
+    int findNextCity(double[][] pheroTable,  double[][] probAry) {
+        int cities = probAry.length;
+        int currentCity = this.tour[pointer];
+
+        // 某機率下會直接使用最大值，減少計算量
+        if (random.nextDouble() < biasedRate) {
+            return getLocalMaxPhero(pheroTable, currentCity);
+        }
+
+//        return tournamentSelect(probAry);
+        return rouletteSelect(pheroTable,  probAry);
+    }
+
     private int tournamentSelect(double[][] pheroTable, double[][] distTable) {
         int cities = distTable.length;
         int currentCity = this.tour[pointer];
-//        cityMap.clear();
-
-//        // 記錄已走過的點
-//        for (int i = 0; i <= pointer; i++) {
-//            cityMap.add(tour[i]);
-//        }
 
         // 找出尚未走過的點
         int mark = 0;
@@ -144,6 +165,7 @@ public class Ant {
                 mark++;
             }
         }
+//        mark = cities - pointer;
 
          int retryTimes = (mark -1) ;
         // 開始競賽
@@ -152,6 +174,38 @@ public class Ant {
         for (int i = 0; i < retryTimes; i++) {
             int p2 = tempTour[random.nextInt(mark)];
             double comp = getProbability(pheroTable, distTable, currentCity, p2);
+            if (score < comp) {
+                city = p2;
+                score = comp;
+            }
+        }
+
+        return city;
+    }
+
+    private int tournamentSelect( double[][] probTable) {
+        int cities = probTable.length;
+        int currentCity = this.tour[pointer];
+
+        // 找出尚未走過的點
+        int mark = 0;
+        for (int i = 0; i < cities; i++) {
+            if (!isCityArrival(i)) {
+                tempTour[mark] = i;
+                mark++;
+            }
+        }
+//        int mark = cities - pointer;
+
+//        int retryTimes = (mark -1) ;
+//        int retryTimes = (mark ) /2;
+        int retryTimes = 2;
+        // 開始競賽
+        int city = tempTour[random.nextInt(mark)];
+        double score = probTable[currentCity][city];
+        for (int i = 0; i < retryTimes; i++) {
+            int p2 = tempTour[random.nextInt(mark)];
+            double comp = probTable[currentCity][p2];
             if (score < comp) {
                 city = p2;
                 score = comp;
@@ -187,6 +241,33 @@ public class Ant {
         return getLocalMaxPhero(pheroTable, currentCity);
     }
 
+    private int rouletteSelect(double[][] pheroTable, double[][] probAry) {
+        int cities = pheroTable.length;
+        int currentCity = this.tour[pointer];
+
+        double total = 0;
+        for (int i = 0; i < cities; i++) {
+            double prob = isCityArrival(i) ? 0 : probAry[currentCity][i];
+
+            total += prob;
+        }
+
+        // 射輪盤
+        double probability = random.nextDouble() * total;
+        for (int i = 0; i < cities; i++) {
+            double prob = isCityArrival(i) ? 0 : probAry[currentCity][i];
+            if (probability < prob) {
+                return i;
+            } else {
+                probability -= prob;
+            }
+        }
+
+//        return cities - 1;
+        // 機率太低什麼都沒挑到，挑 phero 最大值
+        return getLocalMaxPhero(pheroTable, currentCity);
+    }
+
     private double getProbability(double[][] pheroTable, double[][] distTable, int currentIndex, int city) {
         if (isCityArrival(city)) {
             return 0;
@@ -199,4 +280,5 @@ public class Ant {
             }
         }
     }
+
 }
