@@ -46,6 +46,10 @@ public class Ant {
         this.biasedRate = rate;
     }
 
+    public void onInit(){
+        this.resetTour();
+    }
+
     public void resetTour() {
         Arrays.fill(this.tour, -1);
         Arrays.fill(arrivalFlag, false);

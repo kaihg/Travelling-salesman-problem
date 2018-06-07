@@ -23,6 +23,14 @@ public class TabuAnt extends Ant{
         }
     }
 
+    @Override
+    public void onInit() {
+        super.onInit();
+        for (List<TabuCity> list : tabuCities){
+            list.clear();
+        }
+    }
+
     public void startTour(double[][] pheroTable, double[][] distTable, double[][] probAry) {
         super.startTour(pheroTable,distTable,probAry);
         // 排序list，讓數量最多的

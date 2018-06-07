@@ -76,7 +76,7 @@ public class AntModel implements AlgorithmModel {
         initPheromone();
         computerAllProbility();
 
-        ants.forEach(Ant::resetTour);
+        ants.forEach(Ant::onInit);
 
         this.shortestTour = Double.MAX_VALUE;
     }
