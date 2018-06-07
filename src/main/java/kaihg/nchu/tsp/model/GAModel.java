@@ -108,6 +108,27 @@ public class GAModel implements AlgorithmModel {
 
     }
 
+//    int[][] selectWithParent(double[] parentScore, int[][] parent, int[][] child, int[][] temp){
+//        // 找出最好
+//        int bestIndex = 0;
+//        for (int i = 1; i < parentScore.length; i++) {
+//            bestIndex = judgmentWinner(parentScore,i,bestIndex);
+//        }
+//        int[] bestOne = parent[bestIndex];
+//
+//        double[] fitnessScores2 = fitnessFunction(child);
+//        int[][] selected2 = select(child, fitnessScores2);
+//
+//        // 找出最差替換掉
+//        int badIndex = 0;
+//        for (int i = 1; i < fitnessScores2.length; i++) {
+//            badIndex =  fitnessScores2[i] < fitnessScores2[badIndex] ? badIndex : i;
+//        }
+//        selected2[badIndex] = bestOne;
+//
+//        return selected2;
+//    }
+
 
     protected void changeCurrentPopulation(int[][] temp, int[][] current) {
         for (int i = 0; i < temp.length; i++) {
@@ -209,5 +230,12 @@ public class GAModel implements AlgorithmModel {
     @Override
     public void updatePossibleTours(int[][] tours) {
         this.current = tours;
+
+//        for(int[] tour : tours){
+//            if (Arrays.stream(tour).distinct().count() != tour.length){
+//                throw new RuntimeException("WRONG tour : " + Arrays.toString(tour));
+//            }
+//        }
+
     }
 }

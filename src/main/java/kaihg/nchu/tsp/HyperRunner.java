@@ -32,6 +32,7 @@ public class HyperRunner {
 
     public HyperRunner(City[] cities, Config config, GAConfig gaConfig) {
         motherRandom = new Random(777);
+//        motherRandom = new Random();
 
         IEvaluator evaluator = new CycleEvaluator(cities);
 

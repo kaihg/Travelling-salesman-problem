@@ -1,7 +1,7 @@
 {
   "numAnts": 50,
-  "iteration": 1001,
-  "pheromoneRate": 0.9,
+  "iteration": 1501,
+  "pheromoneRate": 1.5,
   "distanceRate": 1,
   "biasedRate": 0,
   "Q": 3000,

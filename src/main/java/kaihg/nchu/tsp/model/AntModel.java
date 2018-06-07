@@ -5,6 +5,7 @@ import kaihg.nchu.tsp.util.DistanceCal;
 import kaihg.nchu.tsp.vo.Ant;
 import kaihg.nchu.tsp.vo.City;
 import kaihg.nchu.tsp.vo.Config;
+import kaihg.nchu.tsp.vo.TabuAnt;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -54,7 +55,8 @@ public class AntModel implements AlgorithmModel {
         this.distanceRate = config.distanceRate;
 
         Stream<Ant> stream = Stream.generate(() -> {
-            Ant ant = new Ant(cities.length);
+//            Ant ant = new Ant(cities.length);
+            Ant ant = new TabuAnt(cities.length);
             ant.setPheroRate(config.pheromoneRate);
             ant.setDistRate(config.distanceRate);
             ant.setBiasdRate(config.biasedRate);
@@ -74,8 +76,6 @@ public class AntModel implements AlgorithmModel {
         initPheromone();
         computerAllProbility();
 
-        // 設定隨機起始點
-        //            ant.moveToCity(random.nextInt(cities.length));
         ants.forEach(Ant::resetTour);
 
         this.shortestTour = Double.MAX_VALUE;
@@ -85,7 +85,7 @@ public class AntModel implements AlgorithmModel {
         for (int i = 0; i < cities.length; i++) {
             for (int j = 0; j <i; j++) {
                 double probability = Math.pow(pheromoneTable[i][j], pheromoneRate) * Math.pow(1 / distanceTable[i][j], distanceRate);
-                probability = Math.max(probability,Double.MIN_VALUE);   // 控制最小值
+//                probability = Math.max(probability,Double.MIN_VALUE);   // 控制最小值
 //                probability = Math.min(probability,1);  // 控制最大值
 
                 probilityTable[i][j] = probilityTable[j][i] = probability;
@@ -162,9 +162,9 @@ public class AntModel implements AlgorithmModel {
 
         // compare to best
         Ant ant = ants.stream().min(Comparator.comparingDouble(Ant::getTourDistance)).get();
+
         if (ant.getTourDistance() < shortestTour) {
             shortestTour = ant.getTourDistance();
-//            ant.getTour().toArray(bestTour);
             System.arraycopy(ant.getTour(), 0, bestTour, 0, cities.length);
         }
     }

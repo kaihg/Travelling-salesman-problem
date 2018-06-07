@@ -32,9 +32,9 @@ public class AntModelTest {
 
         ants = Stream.generate(() -> {
             Ant ant = new Ant(cities.length);
-            ant.setPheroRate(0.8);
-            ant.setDistRate(0.8);
-            ant.setBiasdRate(0);
+            ant.setPheroRate(config.pheromoneRate);
+            ant.setDistRate(config.distanceRate);
+            ant.setBiasdRate(config.biasedRate);
 
             ant.setRandom(random);
             return ant;
@@ -44,7 +44,7 @@ public class AntModelTest {
     @Test
     public void testModel() {
         model.init(-708050255);
-        int iteration = 1000;
+        int iteration = 2000;
         for (int i = 0; i < iteration; i++) {
             model.iterationOnce();
         }
@@ -55,6 +55,21 @@ public class AntModelTest {
         Assert.assertEquals(tour.length,51);
         Assert.assertEquals( Arrays.stream(tour).distinct().count(),51);
 
+    }
+
+    @Test
+    public void testModel2() {
+        model.init(-444918832);
+        int iteration = 300;
+        for (int i = 0; i < iteration; i++) {
+            model.iterationOnce();
+        }
+//        model.iterationOnce();
+
+        int[] tour = model.getShortestTour();
+        System.out.println(model.getShortestTourDistance());
+        Assert.assertEquals(tour.length,51);
+        Assert.assertEquals( Arrays.stream(tour).distinct().count(),51);
     }
 
     @Test

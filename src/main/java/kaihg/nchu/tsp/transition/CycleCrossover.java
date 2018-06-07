@@ -86,14 +86,25 @@ public class CycleCrossover implements ITransition<int[][]> {
                 TempPair pair = tempPairMap.get(parent1[startIndex]);
                 pairList.add(pair);
                 flags[pair.index] = true;
-
-                while (pair.index != startIndex) {
+                try {
+                    while (pair.index != startIndex) {
 //                    pair = tempPairs[parent1[pair.index]];
 
-                    pair = tempPairMap.get(parent1[pair.index]);
-                    pairList.add(pair);
-                    flags[pair.index] = true;
+                        pair = tempPairMap.get(parent1[pair.index]);
+                        pairList.add(pair);
+                        flags[pair.index] = true;
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("=============================");
+                    System.out.println(Arrays.toString(parent1));
+                    System.out.println(Arrays.toString(parent2));
+                    System.out.println(startIndex);
+                    System.out.println(pairList);
+//                    System.out.println(tempPairMap);
+                    System.out.println(Arrays.toString(flags));
+                    throw e;
                 }
+
                 cycles.add(pairList);
             }
         }
@@ -114,6 +125,11 @@ public class CycleCrossover implements ITransition<int[][]> {
         int index;
         int city1;
         int city2;
+
+        @Override
+        public String toString() {
+            return "{index=" + index + ", city1=" + city1 + ", city2=" + city2 + "}";
+        }
     }
 
 }
