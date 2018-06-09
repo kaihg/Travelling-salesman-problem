@@ -14,7 +14,7 @@ public class PMCrossoverTest {
 
     @Before
     public void setUp() throws Exception {
-        transition = new PMCrossover(0);
+        transition = new PMCrossover(0, 1);
 
         int[] ant1 = {
                 1, 2, 3, 4, 5, 6, 7, 8

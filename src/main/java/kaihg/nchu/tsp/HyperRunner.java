@@ -13,7 +13,9 @@ import kaihg.nchu.tsp.vo.City;
 import kaihg.nchu.tsp.vo.Config;
 import kaihg.nchu.tsp.vo.GAConfig;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class HyperRunner {
@@ -30,8 +32,9 @@ public class HyperRunner {
 
     private String gaCrossType;
 
-    public HyperRunner(City[] cities, Config config, GAConfig gaConfig) {
-        motherRandom = new Random(777);
+    public HyperRunner(City[] cities, Config config, GAConfig gaConfig, int seed) {
+        System.out.println("Mother Seed is " + seed);
+        motherRandom = new Random(seed);
 //        motherRandom = new Random();
 
         IEvaluator evaluator = new CycleEvaluator(cities);
@@ -87,6 +90,8 @@ public class HyperRunner {
         log("Run with" + (withGA ? "" : "out") + " GA");    // + (withGA? " + "+this.gaCrossType : "")
 
         long time = System.currentTimeMillis();
+        int count = 100;
+        StringBuilder builder = new StringBuilder();
         for (int run = 0; run < runTime; run++) {
             int seed = motherRandom.nextInt();
 //            System.out.println("Start TSP, the seed is " + seed );
@@ -96,9 +101,15 @@ public class HyperRunner {
 
             for (int i = 0; i < iteration; i++) {
 
-                int step = 300;
+                int step = 100;
                 for (int j = 0; j < step; j++) {
                     this.antModel.iterationOnce();
+//                    if(i==0&&j==0){
+//                        builder.append(antModel.getShortestTourDistance()).append("\t");
+//                    }
+
+//                            .append("\n");
+//                    System.out.println(antModel.getShortestTourDistance());
                 }
                 i += step;
 //                this.antModel.iterationOnce();
@@ -108,10 +119,12 @@ public class HyperRunner {
                     this.gaModel.updatePossibleTours(antModel.getAllPossibleTour());
                     for (int j = 0; j < step; j++) {
                         gaModel.iterationOnce();
+                        antModel.updatePossibleTours(gaModel.getAllPossibleTour());
                     }
-                    antModel.updatePossibleTours(gaModel.getAllPossibleTour());
+//                    antModel.updatePossibleTours(gaModel.getAllPossibleTour());
 //                    i+=step;
                 }
+//                builder.append(antModel.getShortestTourDistance()).append("\t");
 
 //            this.bestDistance = gaModel.getShortestTourDistance();
 //                this.bestDistance = antModel.getShortestTourDistance();
@@ -124,7 +137,7 @@ public class HyperRunner {
 //                }
 
             }
-//            log(antModel.getShortestTourDistance()+"\n");
+
             double localScore = antModel.getShortestTourDistance();
             score += localScore;
             if (localScore < bestOne) {
@@ -136,6 +149,8 @@ public class HyperRunner {
             if (thisScore < bestGA) {
                 bestGA = thisScore;
             }
+
+            builder.append("\n");
         }
         score /= runTime;
         gaScore /= runTime;
@@ -146,6 +161,8 @@ public class HyperRunner {
         log("The avg result is ANT : " + score + ", GA : " + gaScore);
         log("And the best one is ANT : " + bestOne+", GA : "+ bestGA);
         log(Arrays.toString(bestTour));
+
+        System.out.println(builder.toString());
     }
 
     public void showMessage() {

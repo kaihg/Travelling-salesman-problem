@@ -31,7 +31,7 @@ public class GAModelTest {
         model = new GAModel(cities, gaConfig);
 
         model.setEvaluator(new CycleEvaluator(cities));
-        model.setMutation(new Mutation(gaConfig.mutationRate));
+        model.setMutation(new Mutation(gaConfig.mutationRate, 0));
     }
 
     @Test

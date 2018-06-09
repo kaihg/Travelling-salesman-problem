@@ -4,6 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Random;
+
 public class CycleCrossoverTest {
 
     ITransition<int[][]> transition;
@@ -28,6 +31,22 @@ public class CycleCrossoverTest {
 
         Assert.assertArrayEquals(new int[]{2, 4, 6, 8, 7, 5, 3, 1}, tour2);
         Assert.assertArrayEquals(new int[]{2, 4, 3, 8, 5, 6, 7, 1}, target[1]);
+    }
+
+    @Test
+    public void randomTest() {
+        int seed = 1234567;
+        Random random = new Random(seed);
+        int[] ints = random.ints().limit(20).toArray();
+
+        random.setSeed(seed);
+        int[] int2 = random.ints().limit(20).toArray();
+
+        random = new Random(seed);
+        int[] int3 = random.ints().limit(20).toArray();
+
+        Assert.assertArrayEquals(ints, int2);
+        Assert.assertArrayEquals(int3, int2);
     }
 
     @Test

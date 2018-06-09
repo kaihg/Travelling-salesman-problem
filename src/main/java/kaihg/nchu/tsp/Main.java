@@ -29,29 +29,32 @@ public class Main {
 
     private static void startHyperModel(City[] cities, Config config, GAConfig gaConfig) {
         System.out.println("Run " + config.iteration + " times");
+//        int seed = new Random().nextInt();
+        int seed = 1381852947;
+        System.out.println("Initial seed : " + seed);
 
         HyperRunner runner;
         // only ANT
         System.out.println("Basic ANT");
-        runner = new HyperRunner(cities, config, gaConfig);
+        runner = new HyperRunner(cities, config, gaConfig, seed);
         runner.start(config.iteration, false);
         runner.showMessage();
 
         System.out.println("Test GA-PMX");
         gaConfig.crossoverType = "PMX";
-        runner = new HyperRunner(cities, config, gaConfig);
+        runner = new HyperRunner(cities, config, gaConfig, seed);
         runner.start(config.iteration, true);
         runner.showMessage();
 
         System.out.println("Test GA-CX");
         gaConfig.crossoverType = "CX";
-        runner = new HyperRunner(cities, config, gaConfig);
+        runner = new HyperRunner(cities, config, gaConfig, seed);
         runner.start(config.iteration, true);
         runner.showMessage();
 
         System.out.println("Test GA-OX");
         gaConfig.crossoverType = "OX";
-        runner = new HyperRunner(cities, config, gaConfig);
+        runner = new HyperRunner(cities, config, gaConfig, seed);
         runner.start(config.iteration, true);
         runner.showMessage();
     }
