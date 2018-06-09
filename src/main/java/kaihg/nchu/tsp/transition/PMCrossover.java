@@ -1,7 +1,5 @@
 package kaihg.nchu.tsp.transition;
 
-import kaihg.nchu.tsp.vo.Ant;
-
 import java.util.*;
 
 public class PMCrossover implements ITransition<int[][]> {
@@ -11,16 +9,12 @@ public class PMCrossover implements ITransition<int[][]> {
 
     private Map<Integer, Integer> crossMap;
 
-    public PMCrossover(double rate) {
-        this.rate = rate;
-        random = new Random();
-        crossMap = new HashMap<>();
-    }
 
     public PMCrossover(double rate, int seed) {
         this.rate = rate;
         random = new Random(seed);
         crossMap = new HashMap<>();
+
     }
 
     @Override
@@ -112,5 +106,10 @@ public class PMCrossover implements ITransition<int[][]> {
                 cross(ant1, ant2, startIndex, endIndex, target[i], target[i + size]);
             }
         }
+    }
+
+    @Override
+    public void resetRandom(int seed) {
+        this.random.setSeed(seed);
     }
 }

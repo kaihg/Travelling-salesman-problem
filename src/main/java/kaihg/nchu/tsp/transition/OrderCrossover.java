@@ -1,6 +1,5 @@
 package kaihg.nchu.tsp.transition;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -9,7 +8,6 @@ public class OrderCrossover implements ITransition<int[][]> {
 
     private double crossRate;
     private Random random;
-
 
     private Set<Integer> set1;
     private Set<Integer> set2;
@@ -56,6 +54,11 @@ public class OrderCrossover implements ITransition<int[][]> {
                 System.arraycopy(source[i + size], 0, target[i + size], 0, source[i + size].length);
             }
         }
+    }
+
+    @Override
+    public void resetRandom(int seed) {
+        this.random.setSeed(seed);
     }
 
     private void fillHeadAndTail(int[] parent2, int start, int end, int[] child1, Set<Integer> set1) {

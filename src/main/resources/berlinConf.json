@@ -1,6 +1,6 @@
 {
   "numAnts": 50,
-  "iteration": 1501,
+  "iteration": 2501,
   "pheromoneRate": 1.5,
   "distanceRate": 1,
   "biasedRate": 0,

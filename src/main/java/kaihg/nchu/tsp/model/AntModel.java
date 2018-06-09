@@ -55,8 +55,8 @@ public class AntModel implements AlgorithmModel {
         this.distanceRate = config.distanceRate;
 
         Stream<Ant> stream = Stream.generate(() -> {
-//            Ant ant = new Ant(cities.length);
-            Ant ant = new TabuAnt(cities.length);
+            Ant ant = new Ant(cities.length);
+//            Ant ant = new TabuAnt(cities.length);
             ant.setPheroRate(config.pheromoneRate);
             ant.setDistRate(config.distanceRate);
             ant.setBiasdRate(config.biasedRate);

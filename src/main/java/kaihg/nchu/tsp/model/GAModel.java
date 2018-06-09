@@ -46,6 +46,9 @@ public class GAModel implements AlgorithmModel {
     public void init(int seed) {
         this.random = new Random(seed);
 
+        this.crossover.resetRandom(seed);
+        this.mutation.resetRandom(seed);
+
         for (int i = 0; i < current.length; i++) {
             createRandomTour(current[i]);
         }

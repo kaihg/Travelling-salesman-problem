@@ -1,7 +1,5 @@
 package kaihg.nchu.tsp.transition;
 
-import kaihg.nchu.tsp.vo.Ant;
-
 import java.util.Random;
 
 public class Mutation implements ITransition<int[][]> {
@@ -9,14 +7,9 @@ public class Mutation implements ITransition<int[][]> {
     private double rate;
     private Random random;
 
-    public Mutation(double rate) {
-        this.rate = rate;
-        random = new Random();
-    }
-
     public Mutation(double rate, int seed) {
         this.rate = rate;
-        random = new Random(seed);
+        random = new Random(seed * 2);
     }
 
     @Override
@@ -48,5 +41,10 @@ public class Mutation implements ITransition<int[][]> {
                 tar[index1] = tour[index2];
             }
         }
+    }
+
+    @Override
+    public void resetRandom(int seed) {
+        this.random.setSeed(seed * 2);
     }
 }

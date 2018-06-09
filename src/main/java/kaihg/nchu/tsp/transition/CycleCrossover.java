@@ -1,7 +1,5 @@
 package kaihg.nchu.tsp.transition;
 
-import kaihg.nchu.tsp.evalutor.CycleEvaluator;
-
 import java.util.*;
 
 public class CycleCrossover implements ITransition<int[][]> {
@@ -24,6 +22,7 @@ public class CycleCrossover implements ITransition<int[][]> {
         tempPairMap = new HashMap<>(cityCount);
 
         cycles = new ArrayList<>();
+
     }
 
 
@@ -54,6 +53,11 @@ public class CycleCrossover implements ITransition<int[][]> {
                 copyToTarget(child1, child2);
             }
         }
+    }
+
+    @Override
+    public void resetRandom(int seed) {
+        this.random.setSeed(seed);
     }
 
 
